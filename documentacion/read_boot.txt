@@ -1,0 +1,23 @@
+Análisis de código
+
+Estructura perteneciente a la tabla de particiones. 
+
+char first_byte -> Toma el valor del primer byte recuperado a partir del offset 0x1BE, es decir, el comienzo de la tabla de particiones. 
+
+char[3] start_chs -> Los tres byte siguientes al primer byte correspondientes a Cylinder Head Sector Address
+
+char partition_type -> Correspondiente al byte que indica el tipo de partición 
+
+char[3] end_chs -> Cylinder Head Sector del último sector absoluto en la partición.
+
+char start_sector[4] -> Logic block addressing del primer sector absoluto de la partición
+
+char lenght_sectors[4] -> Números de sectores en la partición.
+
+Estructura perteneciente a FAT 12
+
+char jmp[3] -> Perteneciente a jump instruction. 
+
+char oem[8] -> Original equipment manufacturer. Utilizado para indicar en qué sistema el disco está formateado.
+
+short sector size -> 

@@ -1,0 +1,8 @@
+umask=value
+	Set the umask (the bitmask of the permissions that are not present).  The default  is  the  umask  of  the  current process.  The value is given in octal.
+
+Umask es usado para definir los permisos por defecto de los archivos y directorios que se encuentran en el filesytem. En términos más específicos, las umask configura la mask la cual será utilizada por los archivos.
+
+Para la obtención de la umask de un archivo o directorio, se debe aplicar ¬ mask & 777 (El complemento de la máscara conjunción 777).
+
+Así, en nuestro caso, la umask 000 configura todas las máscaras en 777 a todos los archivos y directorios del filesystem. Recordemos que los permisos 777 asignan los permisos de lectura, escritura y ejecución al propietario del archivo o directorio, al grupo que le pertenece y a otros.
