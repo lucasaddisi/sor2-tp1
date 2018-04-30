@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     unsigned char first_byte;
@@ -16,11 +17,11 @@ typedef struct {
     unsigned short sector_size;
     unsigned char cluster_size;
     unsigned short reserved_sectors;
-    unsigned char number_fat;
-    unsigned short max_files_root;
+    unsigned char number_of_fats;
+    unsigned short root_dir_entries;
     unsigned short filesystem_number_sector;
     unsigned char media_type;
-    unsigned short size_fat;
+    unsigned short fat_size_sectors;
     unsigned short sectors_per_track;
     unsigned short numbers_heads;
     unsigned char sectors_before_partition[4];//Probar con long
@@ -52,24 +53,24 @@ typedef struct {
 	// {...} COMPLETAR
 } __attribute((packed)) Fat12Entry;
 //
-//void print_file_info(Fat12Entry *entry) {
-//    switch(entry->filename[0]) {
-//    case 0x00:
-//        return; // unused entry
-//    case 0xE5:
-//        printf("Deleted file: [?%.7s.%.3s]\n", // COMPLETAR
-//        return;
-//    case 0x05:
-//        printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5, // COMPLETAR
-//        break;
-//    case 0x2E:
-//        printf("Directory: [%.8s.%.3s]\n", // COMPLETAR
-//        break;
-//    default:
-//        printf("File: [%.8s.%.3s]\n", // COMPLETAR
-//    }
-//
-//}
+void print_file_info(Fat12Entry *entry) {
+    switch(entry->first_character) {
+    case 0x00:
+        return; // unused entry
+    case 0xE5:
+        printf("Deleted file: [?%.7s.%.3s]",entry->file_name, entry->file_name + 7);
+        return;
+    case 0x05:
+        printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5,entry->file_name, entry->file_name + 7); // COMPLETAR
+       break;
+    case 0x2E:
+        printf("Directory: [%.8s.%.3s]\n",entry->first_character, entry->file_name); // COMPLETAR
+        break;
+    default:
+        printf("File: [%.8s.%.3s]\n", entry->first_character,entry->file_name);// COMPLETAR
+   }
+
+}
 
 int main() {
     FILE * in = fopen("test.img", "rb");
@@ -78,9 +79,11 @@ int main() {
     Fat12BootSector bs;
     Fat12Entry entry;
 
-	//{...} Completar
+    fseek(in, 0x1BE, SEEK_SET); // Voy al inicio...
+    fread(&pt[0], sizeof(PartitionTable), 4, in);
 
     for(i=0; i<4; i++) {
+        printf("%d\n",pt[i].partition_type);
         if(pt[i].partition_type == 1) {
             printf("Encontrada particion FAT12 %d\n", i);
             break;
@@ -94,11 +97,12 @@ int main() {
 
     fseek(in, 0, SEEK_SET);
 	//{...} Leo boot sector
+    fread(&bs, sizeof(Fat12BootSector), 1, in);
 
     printf("En  0x%X, sector size %d, FAT size %d sectors, %d FATs\n\n",
-           ftell(in), bs.sector_size, bs.fat_size_sectors, bs.number_of_fats);
+           (unsigned int)ftell(in), bs.sector_size, bs.fat_size_sectors, bs.number_of_fats);
 
-    fseek(in, (bs.reserved_sectors-1 + bs.fat_size_sectors * bs.number_fats) *
+    fseek(in, (bs.reserved_sectors-1 + bs.fat_size_sectors * bs.number_of_fats) * //multiplico la cantidad de tablas de fat por la cantidad de sectores que integran la tabla fat sumado a los sectores reservador para ir al root directory entry
           bs.sector_size, SEEK_CUR);
 
     printf("Root dir_entries %d \n", bs.root_dir_entries);
@@ -107,7 +111,7 @@ int main() {
         print_file_info(&entry);
     }
 
-    printf("\nLeido Root directory, ahora en 0x%X\n", ftell(in));
+    printf("\nLeido Root directory, ahora en 0x%X\n", (unsigned int)ftell(in));
     fclose(in);
     return 0;
 }

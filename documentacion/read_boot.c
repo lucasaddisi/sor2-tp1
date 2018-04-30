@@ -78,7 +78,7 @@ int main() {
 	printf("  BIOS INT: %d\n", bs.bios_int);
 	printf("  Not used byte: %02X \n", bs.not_used);
 	printf("  Extended boot signature: %02X\n", bs.boot_signature);
-	printf("  Volume_id: 0x%08X\n", (unsigned int)bs.volume_id);
+	//printf("  Volume_id: 0x%08X\n", (unsigned int)bs.volume_id);
     printf("  Volume label: [%.11s]\n", bs.volume_label);
     printf("  Filesystem type: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\n", bs.fs_type[0],bs.fs_type[1],bs.fs_type[2],bs.fs_type[3],bs.fs_type[4],bs.fs_type[5],bs.fs_type[6],bs.fs_type[7]);
     printf("  Filesystem type: [%.8s]\n", bs.fs_type);
