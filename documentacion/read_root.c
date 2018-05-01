@@ -49,8 +49,7 @@ typedef struct {
     unsigned short modified_time;
     unsigned short modified_date;
     unsigned short lo_address_first_cluster;
-    unsigned long file_size;
-	// {...} COMPLETAR
+    unsigned char file_size[4];
 } __attribute((packed)) Fat12Entry;
 //
 void print_file_info(Fat12Entry *entry) {
@@ -64,10 +63,11 @@ void print_file_info(Fat12Entry *entry) {
         printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5,entry->file_name, entry->file_name + 7); // COMPLETAR
        break;
     case 0x2E:
-        printf("Directory: [%.8s.%.3s]\n",entry->first_character, entry->file_name); // COMPLETAR
+        printf("Directory: [%c%.7s.%.3s]\n",entry->first_character,entry->file_name, entry->file_name+7); // Probado, funciona pero cambiamos el formato original
         break;
     default:
-        printf("File: [%.8s.%.3s]\n", entry->first_character,entry->file_name);// COMPLETAR
+
+        printf("File: [%c%.10s]\n",entry->first_character,entry->file_name);/// COMPLETAR
    }
 
 }
