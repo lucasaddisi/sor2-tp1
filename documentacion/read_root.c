@@ -57,7 +57,7 @@ void print_file_info(Fat12Entry *entry) {
     case 0x00:
         return; // unused entry
     case 0xE5:
-        printf("Deleted file: [?%.7s.%.3s]",entry->file_name, entry->file_name + 7);
+        printf("Deleted file: [?%.7s.%.3s], Type of File [0x%02X]\n",entry->file_name, entry->file_name + 7, entry->file_attributes);
         return;
     case 0x05:
         printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5,entry->file_name, entry->file_name + 7); // COMPLETAR
@@ -66,8 +66,7 @@ void print_file_info(Fat12Entry *entry) {
         printf("Directory: [%c%.7s.%.3s]\n",entry->first_character,entry->file_name, entry->file_name+7); // Probado, funciona pero cambiamos el formato original
         break;
     default:
-
-        printf("File: [%c%.10s]\n",entry->first_character,entry->file_name);/// COMPLETAR
+        printf("File: [%c%.10s], Type of File [0x%02X]]\n",entry->first_character,entry->file_name,entry->file_attributes);/// COMPLETAR
    }
 
 }
@@ -109,6 +108,7 @@ int main() {
     for(i=0; i<bs.root_dir_entries; i++) {
         fread(&entry, sizeof(entry), 1, in);
         print_file_info(&entry);
+
     }
 
     printf("\nLeido Root directory, ahora en 0x%X\n", (unsigned int)ftell(in));
