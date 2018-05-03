@@ -60,13 +60,19 @@ void print_file_info(Fat12Entry *entry) {
         printf("Deleted file: [?%.7s.%.3s], Type of File [0x%02X]\n",entry->file_name, entry->file_name + 7, entry->file_attributes);
         return;
     case 0x05:
-        printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5,entry->file_name, entry->file_name + 7); // COMPLETAR
+        printf("File starting with 0xE5: [%c%.7s.%.3s]\n", 0xE5,entry->file_name, entry->file_name + 7); 
        break;
-    case 0x2E:
+    /*case 0x2E:
         printf("Directory: [%c%.7s.%.3s]\n",entry->first_character,entry->file_name, entry->file_name+7); // Probado, funciona pero cambiamos el formato original
-        break;
+        break;*/
     default:
-        printf("File: [%c%.10s], Type of File [0x%02X]]\n",entry->first_character,entry->file_name,entry->file_attributes);/// COMPLETAR
+	switch(entry->file_attributes){
+	case 0x10:
+		printf("Directory: [%c%.10s]\n",entry->first_character,entry->file_name);
+		return;
+	}
+        printf("File: [%c%.7s.%.3s], Type of File [0x%02X]\n",entry->first_character,entry->file_name,entry->file_name + 7,entry->file_attributes);
+	break;
    }
 
 }
